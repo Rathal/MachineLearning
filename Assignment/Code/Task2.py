@@ -192,64 +192,63 @@ def plot_data(ax, qX, qY, x, y, colour, shape):
 
 data1 = get_data(1)
 data2 = get_data(2)
+for k in range(2,4):
 
-k = 3
-
-centroids1, cluster_assigned1, changes1 = kmeans(data1, k)
-centroids2, cluster_assigned2, changes2 = kmeans(data2, k)
-
-if k == 3:
-    x1, x2, x3, y1, y2, y3 = get_coords(cluster_assigned1, k)
-else:
-    x1, x2, y1, y2 = get_coords(cluster_assigned1, k)
-
-fig, ax = plt.subplots(2, 2)
-
-##Plot k = 2 graph 0,0
-plot_data(ax, 0, 0, x1, y1, 'r', 'o')
-plot_data(ax, 0, 0, x2, y2, 'g', 'o')
-plot_data(ax, 0, 0, centroids1[0][0], centroids1[0][1], 'm', 'x')
-plot_data(ax, 0, 0, centroids1[1][0], centroids1[1][1], 'y', 'x')
-ax[0,0].set(xlabel='Height', ylabel='Tail Length')
-
-##Plot k=3 graph 0,0
-if k == 3:
-    x12, x22, x32, y12, y22, y32 = get_coords(cluster_assigned2, k)
-else:
-    x12, x22, y12, y22 = get_coords(cluster_assigned2, k)
+    centroids1, cluster_assigned1, changes1 = kmeans(data1, k)
+    centroids2, cluster_assigned2, changes2 = kmeans(data2, k)
     
-##Plot changes made in 1,0
-c1 = []
-c1_size = []
-for i in range(len(changes1)):
-    c1.append(changes1[i])
-    c1_size.append(i)
-
-ax[1,0].plot(c1_size,c1)
-ax[1,0].set(xlabel='Iteration Step', ylabel='Objective Function')
-
-#ax[1,0].plot([len(changes1)],[changes1])
-
+    if k == 3:
+        x1, x2, x3, y1, y2, y3 = get_coords(cluster_assigned1, k)
+    else:
+        x1, x2, y1, y2 = get_coords(cluster_assigned1, k)
     
-plot_data(ax, 0, 1, x12, y12, 'r', 'o')
-plot_data(ax, 0, 1, x22, y22, 'g', 'o')
-plot_data(ax, 0, 1, centroids2[0][0], centroids2[0][1], 'm', 'x')
-plot_data(ax, 0, 1, centroids2[1][0], centroids2[1][1], 'y', 'x')
-ax[0,1].set(xlabel='Height', ylabel='Leg Length')
-
-if k == 3:
-    plot_data(ax, 0, 0, x3, y3, 'b', 'o')
-    plot_data(ax, 0, 0, centroids1[2][0], centroids1[2][1], 'c', 'x')
-    plot_data(ax, 0, 1, x32, y32, 'b', 'o')
-    plot_data(ax, 0, 1, centroids2[2][0], centroids2[2][1], 'c', 'x')
-
-c2 = []
-c2_size = []
-for i in range(len(changes2)):
-    c2.append(changes2[i])
-    c2_size.append(i)
-
-ax[1,1].plot(c2_size,c2)
-ax[1,1].set(xlabel='Iteration Step', ylabel='Objective Function')
-
-plt.show()
+    fig, ax = plt.subplots(2, 2)
+    
+    ##Plot k = 2 graph 0,0
+    plot_data(ax, 0, 0, x1, y1, 'r', 'o')
+    plot_data(ax, 0, 0, x2, y2, 'g', 'o')
+    plot_data(ax, 0, 0, centroids1[0][0], centroids1[0][1], 'm', 'x')
+    plot_data(ax, 0, 0, centroids1[1][0], centroids1[1][1], 'y', 'x')
+    ax[0,0].set(xlabel='Height', ylabel='Tail Length')
+    
+    ##Plot k=3 graph 0,0
+    if k == 3:
+        x12, x22, x32, y12, y22, y32 = get_coords(cluster_assigned2, k)
+    else:
+        x12, x22, y12, y22 = get_coords(cluster_assigned2, k)
+        
+    ##Plot changes made in 1,0
+    c1 = []
+    c1_size = []
+    for i in range(len(changes1)):
+        c1.append(changes1[i])
+        c1_size.append(i)
+    
+    ax[1,0].plot(c1_size,c1)
+    ax[1,0].set(xlabel='Iteration Step', ylabel='Objective Function')
+    
+    #ax[1,0].plot([len(changes1)],[changes1])
+    
+        
+    plot_data(ax, 0, 1, x12, y12, 'r', 'o')
+    plot_data(ax, 0, 1, x22, y22, 'g', 'o')
+    plot_data(ax, 0, 1, centroids2[0][0], centroids2[0][1], 'm', 'x')
+    plot_data(ax, 0, 1, centroids2[1][0], centroids2[1][1], 'y', 'x')
+    ax[0,1].set(xlabel='Height', ylabel='Leg Length')
+    
+    if k == 3:
+        plot_data(ax, 0, 0, x3, y3, 'b', 'o')
+        plot_data(ax, 0, 0, centroids1[2][0], centroids1[2][1], 'c', 'x')
+        plot_data(ax, 0, 1, x32, y32, 'b', 'o')
+        plot_data(ax, 0, 1, centroids2[2][0], centroids2[2][1], 'c', 'x')
+    
+    c2 = []
+    c2_size = []
+    for i in range(len(changes2)):
+        c2.append(changes2[i])
+        c2_size.append(i)
+    
+    ax[1,1].plot(c2_size,c2)
+    ax[1,1].set(xlabel='Iteration Step', ylabel='Objective Function')
+    
+    plt.show()
