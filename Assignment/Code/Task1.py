@@ -26,13 +26,15 @@ def pol_regression(x_train, y_train, degree):
     parameters = 0
 #    print(coeffs)
 #    print(coeffs[0])
-    
-    w1 = get_weights(x_train, y_train, degree)
-    Xtest1 = get_poly_data_matrix(x_train, degree)
-    ytest1 = Xtest1.dot(w1)
-    
-    x_test, y_test = sort_data(x_train, ytest1)
-    plt.plot(x_test, y_test)
+    if degree > 0:
+        w1 = get_weights(x_train, y_train, degree)
+        Xtest1 = get_poly_data_matrix(x_train, degree)
+        ytest1 = Xtest1.dot(w1)
+        
+        x_test, y_test = sort_data(x_train, ytest1)
+        plt.plot(x_test, y_test)
+    else:
+        plt.plot([-5,5],[0,0])
     
     return parameters
 
@@ -88,16 +90,18 @@ def get_training_data(data, split):
 data = get_data()
 x_train, y_train, x_test, y_test = get_training_data(data, 1)
 ####    Plotting Data    ####
+plt.figure()
 plt.xlim(-5,5)
 plt.plot(x_train, y_train, 'bo')
 
-#pol_regression(x_train, )
+pol_regression(x_train, y_train, 0)
 pol_regression(x_train, y_train, 1)
 pol_regression(x_train, y_train, 2)
 pol_regression(x_train, y_train, 3)
 pol_regression(x_train, y_train, 5)
 pol_regression(x_train, y_train, 10)
-plt.legend(["Data",1,2,3,5,10])
+plt.legend(["Data",0,1,2,3,5,10])
+plt.show()
 #
 #w1 = get_weights(x_train, y_train, i)
 #Xtest1 = get_poly_data_matrix(x_train, i)
