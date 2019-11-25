@@ -21,11 +21,18 @@ def get_weights(x,y,degree):
 
 
 
-def pol_regression(features_train, y_train, degree):
+def pol_regression(x_train, y_train, degree):
     #Code
     parameters = 0
 #    print(coeffs)
 #    print(coeffs[0])
+    
+    w1 = get_weights(x_train, y_train, degree)
+    Xtest1 = get_poly_data_matrix(x_train, degree)
+    ytest1 = Xtest1.dot(w1)
+    
+    x_test, y_test = sort_data(x_train, ytest1)
+    plt.plot(x_test, y_test)
     
     return parameters
 
@@ -40,8 +47,16 @@ def get_data():
 #    print(data)
     return data
 
-
-
+def sort_data(x_in, y_in):
+##Sort Data
+        df = pd.DataFrame([x_in, y_in])
+        df.sort_values(0, axis=1, ascending = True, inplace = True)
+        x = []
+        y = []
+        for point in df:
+            x = np.append(x, df[point][0])
+            y = np.append(y, df[point][1])
+        return x, y
 
 def get_training_data(data, split):
     x_input = data['x'].as_matrix()
@@ -64,56 +79,29 @@ def get_training_data(data, split):
     #        print("X:{0} : Y:{1}".format(x_input[i],y_input[i]))
             x_test = np.append(x_test, x_input[i])
             y_test = np.append(y_test, y_input[i])
-        
-        ##Sort Data
-        df_Test = pd.DataFrame([x_test, y_test])
-    #    print(df_Test)
-        df_Test.sort_values(0, axis=1, ascending = True, inplace = True)
-    #    print(df_Test)
-        
-        x_test = []
-        y_test = []
-        for point in df_Test:
-    #        print(df_Test[point][0])
-    #        x_test.append(df_Test[point][0])
-    #        y_test.append(df_Test[point][1])
-            x_test = np.append(x_test, df_Test[point][0])
-            y_test = np.append(y_test, df_Test[point][1])
+    x_test, y_test = sort_data(x_test, y_test)
+    
     
     return x_train, y_train, x_test, y_test
-
-
-
-
 
 ####    Main Loop    #####
 data = get_data()
 x_train, y_train, x_test, y_test = get_training_data(data, 1)
-
-#for i in range(5):
-#    print(get_weights(x_train,y_train,i))
-
-#get_poly_data_matrix(x_train,1)
-##  Printing Data ##
-#print("Training Data:")
-#for i in range(len(x_train)):
-#    print("X: {0} | Y: {1}".format(x_train[i], y_train[i]))
-#print("Testing Data:")
-#for i in range(len(x_test)):
-#    print("X: {0} | Y: {1}".format(x_test[i], y_test[i]))
-
-
 ####    Plotting Data    ####
 plt.xlim(-5,5)
 plt.plot(x_train, y_train, 'bo')
-#plt.plot(x_test, y_test, 'g')
 
-
-w1 = get_weights(x_train, y_train, 2)
-print(w1)
-Xtest1 = get_poly_data_matrix(x_train, 2)
-print(Xtest1)
-ytest1 = Xtest1.dot(w1)
-print(ytest1)
-plt.plot(x_train, ytest1, 'r')
-#print(get_poly_data_matrix(x_train, 1))
+#pol_regression(x_train, )
+pol_regression(x_train, y_train, 1)
+pol_regression(x_train, y_train, 2)
+pol_regression(x_train, y_train, 3)
+pol_regression(x_train, y_train, 5)
+pol_regression(x_train, y_train, 10)
+plt.legend(["Data",1,2,3,5,10])
+#
+#w1 = get_weights(x_train, y_train, i)
+#Xtest1 = get_poly_data_matrix(x_train, i)
+#ytest1 = Xtest1.dot(w1)
+#
+#x_test, y_test = sort_data(x_train, ytest1)
+#plt.plot(x_test, y_test, 'r')
