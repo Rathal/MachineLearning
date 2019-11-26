@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.metrics import mean_squared_error
 #import numpy.linalg as linalg
 
 def get_poly_data_matrix(x, degree):
@@ -16,8 +17,9 @@ def get_weights(x,y,degree):
     X = get_poly_data_matrix(x,degree)
     XX  = X.transpose().dot(X)
     weight = np.linalg.solve(XX, X.transpose().dot(y))
+
 #    weight = np.polyfit(x,y,degree)
-#    print(weight)
+
     return weight
 
 
@@ -26,34 +28,76 @@ def get_weights(x,y,degree):
 
 def eval_pol_regression(parameters, x, y, degree):
     rmse = 0
-    
+
     ##Squaring the residuals
     ##Finding the average
     ##Taking the square root of the result
-    
-    ## (y - wx^2 + wx + w)^2
-    ## sum of all the points
-    ## sqrt the result
-#    print("Parameters:")
-#    print(parameters)
-    sum_residuals = 0
+
+    yHat = 0
 #    print("Maths:")
+#    print(x)
+#    for i in x:
+#        yHat = np.polyval(parameters,i)
+#        print(yHat)
+
+#    for i in range(0, len(x)):
+#        yHat = np.polyval(parameters,x[i])
+##        print(yHat)
+##        print(y[i])
+#        sumYHat.append(yHat)
+##        print((yHat-y[i])**2)
+#        sumVals += (yHat-y[i])**2
+##        sumVals += (y[i]-yHat)**2
+#    print(sumYHat)
+#    print("Sum Vals / n")
+#    print(sumVals/len(x))
+#    print("Sqrt: ")
+#    print(np.sqrt(sumVals/len(x)))
+#    rmse = np.sqrt(sumVals/len(x))
+    
+    sumYHat = [None]*len(x)
     for i in range(0, len(parameters)):
-        sum_residuals += (parameters[i])*(x**i)
+#        print(parameters[i])
+        yHat += (parameters[i])*(x**i)
+        print("{0}{1}^{2}".format(parameters[i],x,i))
+#        print("yHat")
+#        print(yHat)
+    print("Done")
+    print(yHat)
+    sumYHat = yHat
+    
+    
+#    print("sumYHat")
+#    print(sumYHat)
+#    print("Y")
+#    print(y)
 #        print(sum_residuals)
 #    print("SE:")
-    se = y - sum_residuals
-    for i in se:
-        rmse += i
-    for i in x:
-        rmse += parameters[len(parameters)-1]*i
-#    print(rmse)
-    rmse = rmse**2
-#    print(len(x))
-    rmse = rmse / len(x)
-#    print(rmse)
-    rmse = np.sqrt(rmse)
-#    print(rmse)
+#    print("Sum")
+#    print(sumYHat[0])
+#    print(y)
+    ##Sum of all (yHat - Y)
+    se = sumYHat - y
+#    print(sum_residuals - y)
+#    print(y - sum_residuals)
+#    se = y - sum_residuals
+#    for i in se:
+#        rmse += i
+#    for i in x:
+#        rmse += parameters[len(parameters)-1]*i
+##    print(rmse)
+#    rmse = rmse**2
+##    print(len(x))
+#    rmse = rmse / len(x)
+##    print(rmse)
+#    rmse = np.sqrt(rmse)
+    
+    rmse = np.sqrt(((sumYHat - y)**2).mean())
+    print("RMSE")
+    print(rmse)
+#    rmse = np.sqrt(mean_squared_error(y, sumYHat))
+    
+    
     
     return rmse
 
@@ -155,6 +199,9 @@ def get_training_data(data, split):
     
     return x_train, y_train, x_test, y_test
 
+
+
+
 ####    Main Loop    #####
 data = get_data()
 x_train, y_train, x_test, y_test = get_training_data(data, 1)
@@ -167,6 +214,8 @@ fig, axs = plt.subplots(2)
 #plt.figure()
 axs[0].set_xlim(-5,5)
 axs[0].set_ylim(-200,50)
+#axs[1].set_ylim(0,10)
+axs[1].set_yscale('log')
 axs[0].plot(x_train, y_train, 'bo')
 
 for i in range(1,len(degrees)):
@@ -177,9 +226,16 @@ axs[0].legend(["Data",0,1,2,3,5,10],bbox_to_anchor=(1.05,1))
 x_train, y_train, x_test, y_test = get_training_data(data, 0.7)
 axs[1].set(xlabel='Degree', ylabel='RSME')
 
+#eval_pol_regression(parameters[2],x_train,y_train, (len(parameters[2])-1))
+
+#deg0 = pol_regression(x_train, y_train, 0)
+print(deg0)
+#for i in range(1,len(degrees)):
+#    parameters[i] = pol_regression(x_train, y_train, degrees[i])
+#    plot_data(axs,0,parameters[i])
 rsme_Train = [None]*6
 rsme_Test = [None]*6
-
+#print(len(x_train))
 for i in range(1,len(degrees)):
     rsme_Train[i] = eval_pol_regression(parameters[i], x_train, y_train, (len(parameters[i])-1))
     rsme_Test[i] = eval_pol_regression(parameters[i], x_test, y_test, (len(parameters[i])-1))
