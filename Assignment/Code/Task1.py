@@ -16,9 +16,43 @@ def get_weights(x,y,degree):
     X = get_poly_data_matrix(x,degree)
     XX  = X.transpose().dot(X)
     weight = np.linalg.solve(XX, X.transpose().dot(y))
+#    weight = np.polyfit(x,y,degree)
 #    print(weight)
     return weight
 
+
+def eval_pol_regression(parameters, x, y, degree):
+    rmse = 0
+    
+    ##Squaring the residuals
+    ##Finding the average
+    ##Taking the square root of the result
+    
+    ## (y - wx^2 + wx + w)^2
+    ## sum of all the points
+    ## sqrt the result
+    print("Parameters:")
+    print(parameters)
+    sum_residuals = 0
+    print("Maths:")
+    for i in range(0, len(parameters)):
+        sum_residuals += (parameters[i])*(x**i)
+        print(sum_residuals)
+    print("SE:")
+    se = y - sum_residuals
+    for i in se:
+        rmse += i
+    for i in x:
+        rmse += parameters[len(parameters)-1]*i
+    print(rmse)
+    rmse = rmse**2
+    print(len(x))
+    rmse = rmse / len(x)
+    print(rmse)
+    rmse = np.sqrt(rmse)
+    print(rmse)
+    
+    return rmse
 
 
 def pol_regression(x_train, y_train, degree):
@@ -27,14 +61,15 @@ def pol_regression(x_train, y_train, degree):
 #    print(coeffs)
 #    print(coeffs[0])
     if degree > 0:
-        w1 = get_weights(x_train, y_train, degree)
-        Xtest1 = get_poly_data_matrix(x_train, degree)
-        ytest1 = Xtest1.dot(w1)
-        
-        x_test, y_test = sort_data(x_train, ytest1)
+        w = get_weights(x_train, y_train, degree)
+        Xtest = get_poly_data_matrix(x_train, degree)
+        ytest = Xtest.dot(w)
+        x_test, y_test = sort_data(x_train, ytest)
         plt.plot(x_test, y_test)
+        parameters = w
     else:
         plt.plot([-5,5],[0,0])
+    
     
     return parameters
 
@@ -73,6 +108,8 @@ def get_training_data(data, split):
         x_train = np.append(x_train, x_input[i])
         y_train = np.append(y_train, y_input[i])
 #    print("Test Data:")
+    x_train, y_train = sort_data(x_train, y_train)
+        
     x_test = []
     y_test = []
     if split != 1:    
@@ -94,18 +131,33 @@ plt.figure()
 plt.xlim(-5,5)
 plt.plot(x_train, y_train, 'bo')
 
-pol_regression(x_train, y_train, 0)
-pol_regression(x_train, y_train, 1)
-pol_regression(x_train, y_train, 2)
-pol_regression(x_train, y_train, 3)
-pol_regression(x_train, y_train, 5)
-pol_regression(x_train, y_train, 10)
+para0 = pol_regression(x_train, y_train, 0)
+para1 = pol_regression(x_train, y_train, 1)
+para2 = pol_regression(x_train, y_train, 2)
+para3 = pol_regression(x_train, y_train, 3)
+para5 = pol_regression(x_train, y_train, 5)
+para10 = pol_regression(x_train, y_train, 10)
 plt.legend(["Data",0,1,2,3,5,10])
+
+
+x_train, y_train, x_test, y_test = get_training_data(data, 0.7)
+fig, axs = plt.subplots()
+axs.set(xlabel='Degree', ylabel='RSME')
+
+rsme1 = eval_pol_regression(para1, x_train, y_train, (len(para1)-1))
+rsme2 = eval_pol_regression(para2, x_train, y_train, (len(para2)-1))
+rsme3 = eval_pol_regression(para3, x_train, y_train, (len(para3)-1))
+rsme5 = eval_pol_regression(para5, x_train, y_train, (len(para5)-1))
+rsme10 = eval_pol_regression(para10, x_train, y_train, (len(para10)-1))
+axs.plot([1,2,3,4,10],[rsme1,rsme2,rsme3,rsme5,rsme10])
+
+rsme1 = eval_pol_regression(para1, x_test, y_test, (len(para1)-1))
+rsme2 = eval_pol_regression(para2, x_test, y_test, (len(para2)-1))
+rsme3 = eval_pol_regression(para3, x_test, y_test, (len(para3)-1))
+rsme5 = eval_pol_regression(para5, x_test, y_test, (len(para5)-1))
+rsme10 = eval_pol_regression(para10, x_test, y_test, (len(para10)-1))
+axs.plot([1,2,3,4,10],[rsme1,rsme2,rsme3,rsme5,rsme10])
+axs.legend(["Training Data","Test Data"])
+
+plt.savefig('trainingdata2.png')
 plt.show()
-#
-#w1 = get_weights(x_train, y_train, i)
-#Xtest1 = get_poly_data_matrix(x_train, i)
-#ytest1 = Xtest1.dot(w1)
-#
-#x_test, y_test = sort_data(x_train, ytest1)
-#plt.plot(x_test, y_test, 'r')
