@@ -158,8 +158,10 @@ def get_training_data(data, split):
 ####    Main Loop    #####
 data = get_data()
 x_train, y_train, x_test, y_test = get_training_data(data, 1)
-####    Plotting Data    ####
+degrees = [0,1,2,3,5,10]
+parameters = [None]*6
 
+####    Plotting Data    ####
 fig, axs = plt.subplots(2)
 
 #plt.figure()
@@ -167,54 +169,21 @@ axs[0].set_xlim(-5,5)
 axs[0].set_ylim(-200,50)
 axs[0].plot(x_train, y_train, 'bo')
 
-para0 = pol_regression(x_train, y_train, 0)
-para1 = pol_regression(x_train, y_train, 1)
-para2 = pol_regression(x_train, y_train, 2)
-para3 = pol_regression(x_train, y_train, 3)
-para5 = pol_regression(x_train, y_train, 5)
-para10 = pol_regression(x_train, y_train, 10)
-
-plot_data(axs,0,para1)
-plot_data(axs,0,para2)
-plot_data(axs,0,para3)
-plot_data(axs,0,para5)
-plot_data(axs,0,para10)
+for i in range(1,len(degrees)):
+    parameters[i] = pol_regression(x_train, y_train, degrees[i])
+    plot_data(axs,0,parameters[i])
 axs[0].legend(["Data",0,1,2,3,5,10],bbox_to_anchor=(1.05,1))
 
-#y_coords = []
-#for x in np.arange(-5,5,0.1):
-#    sumY = 0
-#    for b in range(len(para10)):
-##        exp = len(para2)-(b+1)
-#        exp = b
-#        coeff = para10[b]
-##        print("{0}X^{1}".format(coeff,exp))
-#        sumY += coeff * (x**exp)
-#        print(sumY)
-#    y_coords.append(sumY)
-
-#plt.plot(np.arange(-5,5,0.1),y_coords)
-
-
-
-
-
-
 x_train, y_train, x_test, y_test = get_training_data(data, 0.7)
-
 axs[1].set(xlabel='Degree', ylabel='RSME')
 
-rsme1 = eval_pol_regression(para1, x_train, y_train, (len(para1)-1))
-rsme2 = eval_pol_regression(para2, x_train, y_train, (len(para2)-1))
-rsme3 = eval_pol_regression(para3, x_train, y_train, (len(para3)-1))
-rsme5 = eval_pol_regression(para5, x_train, y_train, (len(para5)-1))
-rsme10 = eval_pol_regression(para10, x_train, y_train, (len(para10)-1))
-axs[1].plot([1,2,3,4,10],[rsme1,rsme2,rsme3,rsme5,rsme10])
+rsme_Train = [None]*6
+rsme_Test = [None]*6
 
-rsme1 = eval_pol_regression(para1, x_test, y_test, (len(para1)-1))
-rsme2 = eval_pol_regression(para2, x_test, y_test, (len(para2)-1))
-rsme3 = eval_pol_regression(para3, x_test, y_test, (len(para3)-1))
-rsme5 = eval_pol_regression(para5, x_test, y_test, (len(para5)-1))
-rsme10 = eval_pol_regression(para10, x_test, y_test, (len(para10)-1))
-axs[1].plot([1,2,3,5,10],[rsme1,rsme2,rsme3,rsme5,rsme10])
+for i in range(1,len(degrees)):
+    rsme_Train[i] = eval_pol_regression(parameters[i], x_train, y_train, (len(parameters[i])-1))
+    rsme_Test[i] = eval_pol_regression(parameters[i], x_test, y_test, (len(parameters[i])-1))
+axs[1].plot(degrees,rsme_Train)
+axs[1].plot(degrees,rsme_Test)
 axs[1].legend(["Training Data","Test Data"],bbox_to_anchor=(1.35,0.75))
+
