@@ -221,8 +221,6 @@ for k in range(2,4):
     ax[1,0].plot(c1_size,c1)
     ax[1,0].set(xlabel='Iteration Step', ylabel='Objective Function')
     
-    
-    
     #Plot clusters for dataset 2
     plot_data(ax, 0, 1, x12, y12, 'r', 'o')
     plot_data(ax, 0, 1, x22, y22, 'g', 'o')
