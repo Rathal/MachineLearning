@@ -29,14 +29,7 @@ def eval_pol_regression(parameters, x, y, degree):
     ##Squaring the residuals
     ##Finding the average
     ##Taking the square root of the result
-    
-    #ŷ is the predicted value of y. ie - the y based on the parameters given
-    yHat = 0
 
-    #Calculating predicted values for all of x
-
-    #for i in range(0, len(parameters)):                 #For each parameter:
-        #yHat += (parameters[i])*(x**i)                  #calculate ŷ = bi(x)^i
     
     xMatrix = get_poly_data_matrix(x,degree)
     #Calculate Root Mean Square Error
@@ -48,7 +41,7 @@ def eval_pol_regression(parameters, x, y, degree):
 ##Plot the Data
 def plot_data(axs, sX, para):
     #Get matrix of x coordinates based on x = -5 -> 5 (step 0.1).
-    if isinstance(para, np.float64):
+    if isinstance(para, np.float64): ##If degree = 0, then para has no length
         axs[sX].plot([-5,5],[para,para])
     else:
         xCoords = get_poly_data_matrix(np.arange(-5,5,0.1),len(para)-1)
@@ -59,14 +52,9 @@ def plot_data(axs, sX, para):
 
 ##Polynomial Regression
 def pol_regression(x_train, y_train, degree):
-    parameters = 0
-    ##Ensures degree is larger than 0 to avoid errors
     parameters = get_weights(x_train, y_train, degree)
-    Xtest = get_poly_data_matrix(x_train, degree)
-    ytest = Xtest.dot(parameters) #Dot product of X coord matrix against the weights
-    x_test, y_test = sort_data(x_train, ytest)      
-#    else:        
-#        plt.plot([-5,5],[0,0])
+    plot_data(axs,0,parameters)
+
     return parameters
 
 
@@ -158,7 +146,7 @@ axs[0].plot(x_train, y_train, 'bo')
 ##Plotting polynomials of degree 1,2,3,5,10
 for i in range(len(degrees)):
     parameters[i] = pol_regression(x_train, y_train, degrees[i])
-    plot_data(axs,0,parameters[i])
+    #plot_data(axs,0,parameters[i])
 axs[0].legend(['Ground Truth','$x^{0}$', '$x^{1}$','$x^{2}$','$x^{3}$','$x^{5}$','$x^{10}$'],bbox_to_anchor=(1.05,1))
 
 
