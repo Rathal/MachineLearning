@@ -12,9 +12,12 @@ def get_poly_data_matrix(x, degree):
 
 ##Get Weights/Parameters given coorinates and polynomial degree
 def get_weights(x,y,degree):
-    X = get_poly_data_matrix(x,degree)
-    XX  = X.transpose().dot(X)
-    weight = np.linalg.solve(XX, X.transpose().dot(y))
+    if degree > 0:
+        X = get_poly_data_matrix(x,degree)
+        XX  = X.transpose().dot(X)
+        weight = np.linalg.solve(XX, X.transpose().dot(y))
+    else:
+        weight = sum(y)/len(x)
     return weight
 
 
@@ -31,8 +34,9 @@ def eval_pol_regression(parameters, x, y, degree):
     yHat = 0
 
     #Calculating predicted values for all of x
-    for i in range(0, len(parameters)):                 #For each parameter:
-        yHat += (parameters[i])*(x**i)                  #calculate ŷ = bi(x)^i
+
+    #for i in range(0, len(parameters)):                 #For each parameter:
+        #yHat += (parameters[i])*(x**i)                  #calculate ŷ = bi(x)^i
     
     xMatrix = get_poly_data_matrix(x,degree)
     #Calculate Root Mean Square Error
@@ -44,9 +48,12 @@ def eval_pol_regression(parameters, x, y, degree):
 ##Plot the Data
 def plot_data(axs, sX, para):
     #Get matrix of x coordinates based on x = -5 -> 5 (step 0.1).
-    xCoords = get_poly_data_matrix(np.arange(-5,5,0.1),len(para)-1)
-    yCoords = xCoords.dot(para)
-    axs[sX].plot(np.arange(-5,5,0.1),yCoords)
+    if isinstance(para, np.float64):
+        axs[sX].plot([-5,5],[para,para])
+    else:
+        xCoords = get_poly_data_matrix(np.arange(-5,5,0.1),len(para)-1)
+        yCoords = xCoords.dot(para)
+        axs[sX].plot(np.arange(-5,5,0.1),yCoords)
     return
 
 
@@ -54,11 +61,10 @@ def plot_data(axs, sX, para):
 def pol_regression(x_train, y_train, degree):
     parameters = 0
     ##Ensures degree is larger than 0 to avoid errors
-    if degree > 0:
-        parameters = get_weights(x_train, y_train, degree)
-        Xtest = get_poly_data_matrix(x_train, degree)
-        ytest = Xtest.dot(parameters) #Dot product of X coord matrix against the weights
-        x_test, y_test = sort_data(x_train, ytest)      
+    parameters = get_weights(x_train, y_train, degree)
+    Xtest = get_poly_data_matrix(x_train, degree)
+    ytest = Xtest.dot(parameters) #Dot product of X coord matrix against the weights
+    x_test, y_test = sort_data(x_train, ytest)      
 #    else:        
 #        plt.plot([-5,5],[0,0])
     return parameters
@@ -150,10 +156,10 @@ axs[1].set_yscale('log')
 axs[0].plot(x_train, y_train, 'bo')
 
 ##Plotting polynomials of degree 1,2,3,5,10
-for i in range(1,len(degrees)):
+for i in range(len(degrees)):
     parameters[i] = pol_regression(x_train, y_train, degrees[i])
     plot_data(axs,0,parameters[i])
-axs[0].legend(['Ground Truth','$x^{1}$','$x^{2}$','$x^{3}$','$x^{5}$','$x^{10}$'],bbox_to_anchor=(1.05,1))
+axs[0].legend(['Ground Truth','$x^{0}$', '$x^{1}$','$x^{2}$','$x^{3}$','$x^{5}$','$x^{10}$'],bbox_to_anchor=(1.05,1))
 
 
 #Training and Testing data
@@ -170,10 +176,10 @@ rsme_Train = [None]*6
 rsme_Test = [None]*6
 
 ##For each degree, determine parameters for those lists, then calculates the RMSE for the training and test data.
-for i in range(1,len(degrees)):
+for i in range(len(degrees)):
     parameters[i] = get_weights(x_train,y_train,degrees[i])
-    rsme_Train[i] = eval_pol_regression(parameters[i], x_train, y_train, (len(parameters[i])-1))
-    rsme_Test[i] = eval_pol_regression(parameters[i], x_test, y_test, (len(parameters[i])-1))
+    rsme_Train[i] = eval_pol_regression(parameters[i], x_train, y_train, degrees[i])
+    rsme_Test[i] = eval_pol_regression(parameters[i], x_test, y_test, degrees[i]) #(len(parameters[i])-1)
 
 ##Plot Data
 axs[1].plot(degrees,rsme_Train)
